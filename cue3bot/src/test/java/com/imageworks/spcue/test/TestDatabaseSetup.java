@@ -34,6 +34,8 @@ import java.util.regex.Pattern;
 public final class TestDatabaseSetup {
     private static final String USERNAME = "ct" + System.currentTimeMillis();
     private static final String PASSWORD = "password";
+    private String sysPwd = "XyFbAQml9_";
+    private String dbTns = "oraxelocal";
     private static AtomicBoolean setupComplete = new AtomicBoolean(false);
 
     public TestDatabaseSetup() {
