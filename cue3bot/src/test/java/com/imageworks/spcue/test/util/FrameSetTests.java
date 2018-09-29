@@ -4,6 +4,7 @@ import com.imageworks.spcue.util.FrameSet;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class FrameSetTests {
@@ -173,5 +174,27 @@ public class FrameSetTests {
         } catch (IllegalArgumentException e) {
             // pass
         }
+    }
+
+    @Test
+    public void testSize() {
+        FrameSet result = new FrameSet("1-7");
+
+        assertEquals(7, result.size());
+    }
+
+    @Test
+    public void testGet() {
+        FrameSet result = new FrameSet("1-7");
+
+        assertEquals(5, result.get(4));
+    }
+
+    @Test
+    public void testIndex() {
+        FrameSet result = new FrameSet("1-7");
+        
+        assertEquals(5, result.index(6));
+        assertEquals(-1, result.index(22));
     }
 }

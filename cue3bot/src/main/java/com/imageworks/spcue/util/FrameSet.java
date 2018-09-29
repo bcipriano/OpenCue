@@ -83,8 +83,13 @@ public class FrameSet {
         return frameList.get(idx);
     }
 
+    /**
+     * Query index of frame number in frame set.
+     * @param idx
+     * @return Index of frame. -1 if frame set does not contain frame.
+     */
     public int index(int idx) {
-        return frameList.get(idx);
+        return frameList.indexOf(idx);
     }
 
     /**
