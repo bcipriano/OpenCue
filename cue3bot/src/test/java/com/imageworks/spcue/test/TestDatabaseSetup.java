@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 public final class TestDatabaseSetup {
     private static final String USERNAME = "ct" + System.currentTimeMillis();
     private static final String PASSWORD = "password";
-    private String sysPwd = "XyFbAQml9_";
+    private String sysPwd;
     private String dbTns = "oraxelocal";
     private static AtomicBoolean setupComplete = new AtomicBoolean(false);
 
@@ -44,9 +44,10 @@ public final class TestDatabaseSetup {
             setDbTns(tns);
         }
         String pwd = System.getenv("CUEBOT_DB_SYS_PWD");
-        if (pwd != null) {
-            setSysPwd(pwd);
+        if (pwd == null) {
+            throw new RuntimeException("CUEBOT_DB_SYS_PWD must be set in your environment");
         }
+        setSysPwd(pwd);
     }
 
     private String getDbTns() {
@@ -78,6 +79,9 @@ public final class TestDatabaseSetup {
             return;
         }
 
+        if (System.getenv("TNS_ADMIN") == null) {
+            throw new RuntimeException("TNS_ADMIN must be set in your environment");
+        }
         System.setProperty("oracle.net.tns_admin", System.getenv("TNS_ADMIN"));
         System.out.println("CREATING CUE3 TEST USER");
         Connection sysConn = DriverManager.getConnection(
