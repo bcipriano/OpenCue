@@ -1,0 +1,13 @@
+
+Blender File
+/shots/scenes/pipe_demo/blend/demo_001.blend
+
+
+Blender Output
+/shots/scenes/pipe_demo/blend/images/demo_001_
+
+
+Make Mov Command
+ffmpeg -r 60 -f image2 -s 1920x1080 -start_number #IFRAME# -i /shots/scenes/pipe_demo/blend/images/demo_001_%04d.png -vframes 1 -vcodec libx264 -crf 25  -pix_fmt yuv420p /shots/scenes/pipe_demo/blend/images/test.mp4
+
+

@@ -1,0 +1,105 @@
+FROM opencue/rqd
+
+# Update [YOUR_BUCKET_NAME] with the name of your bucket in the following line:
+# This variable is referenced in rqd_startup.sh
+ENV GCS_FUSE_BUCKET [YOUR_BUCKET_NAME]
+
+
+# This is the GCS bucket mount point on your Render Host. /shots is correct for this tutorial. Referenced in rqd_startup.sh
+ENV GCS_FUSE_MOUNT /shots
+
+# Create directory mount point
+RUN mkdir /shots
+RUN chmod 777 /shots
+
+# Install gcsfuse
+ENV PATH $PATH:/usr/local/gcloud/google-cloud-sdk/bin
+COPY rqd/demo/install_gcsfuse.sh /opt/opencue/
+RUN chmod 777 /opt/opencue/install_gcsfuse.sh
+RUN /opt/opencue/install_gcsfuse.sh
+
+RUN yum update && \
+	yum install -y \
+		curl \
+		bzip2 \
+		libfreetype6 \
+		libgl1-mesa-dev \
+		libXi-devel  \
+		mesa-libGLU-devel \
+		zlib-devel \
+		libXinerama-devel \
+		libXrandr-devel \
+	yum -y autoremove && \
+	rm -rf /var/lib/apt/lists/*
+
+RUN yum -y install bzip2
+
+# Install blender
+ENV BLENDER_MAJOR 2.79
+ENV BLENDER_VERSION 2.79
+ENV BLENDER_BZ2_URL https://mirror.clarkson.edu/blender/release/Blender$BLENDER_MAJOR/blender-$BLENDER_VERSION-linux-glibc219-x86_64.tar.bz2
+
+RUN mkdir /usr/local/blender && \
+ curl -SL "$BLENDER_BZ2_URL" -o blender.tar.bz2 && \
+ tar -jxvf blender.tar.bz2 -C /usr/local/blender --strip-components=1 && \
+ rm blender.tar.bz2
+
+# Install ffmpeg
+RUN yum install -y wget
+RUN wget https://raw.githubusercontent.com/q3aql/ffmpeg-install/master/ffmpeg-install
+RUN chmod a+x ffmpeg-install
+RUN ./ffmpeg-install --install release
+
+# Test installs
+RUN ffmpeg -version
+RUN ln -s /usr/local/blender/blender /usr/local/bin/blender
+RUN blender --version
+
+COPY rqd/demo/rqd_startup.sh /opt/opencue
+RUN chmod 777 /opt/opencue/rqd_startup.sh
+
+ENV CUE_FRAME_LOG_DIR /shots/logs
+
+# Install Pyoutline
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
+
+COPY proto/ ./proto
+COPY pycue/README.md ./pycue/
+COPY pycue/setup.py ./pycue/
+COPY pycue/opencue ./pycue/opencue
+COPY pycue/FileSequence ./pycue/FileSequence
+
+RUN python -m grpc_tools.protoc \
+  -I=./proto \
+  --python_out=./pycue/opencue/compiled_proto \
+  --grpc_python_out=./pycue/opencue/compiled_proto \
+  ./proto/*.proto
+
+# Fix imports to work in both Python 2 and 3. See
+# <https://github.com/protocolbuffers/protobuf/issues/1491> for more info.
+RUN sed -i 's/^\(import.*_pb2\)/from . \1/' pycue/opencue/compiled_proto/*.py
+
+COPY pyoutline/README.md ./pyoutline/
+COPY pyoutline/setup.py ./pyoutline/
+COPY pyoutline/bin ./pyoutline/bin
+COPY pyoutline/etc ./pyoutline/etc
+COPY pyoutline/tests/ ./pyoutline/tests
+COPY pyoutline/wrappers ./pyoutline/wrappers
+COPY pyoutline/outline ./pyoutline/outline
+
+COPY VERSION.in VERSIO[N] ./
+RUN test -e VERSION || echo "$(cat VERSION.in)-custom" | tee VERSION
+
+RUN cd pycue && python setup.py install
+
+RUN cd pyoutline && python setup.py install
+
+RUN useradd opencue_user; \
+    echo opencue_user:opencue_userpw |chpasswd;
+
+ENV CUEBOT_HOSTS cuebot
+
+COPY demo_files/ /opt/opencue/demo_files
+
+ENTRYPOINT ["/opt/opencue/rqd_startup.sh"]

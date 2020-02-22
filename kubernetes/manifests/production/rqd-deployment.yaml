@@ -1,0 +1,50 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.18.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: rqd
+  name: rqd
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.18.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: rqd
+    spec:
+      containers:
+      - env:
+        - name: CUEBOT_HOSTNAME
+          value: cuebot
+        image: gcr.io/[INSERT YOUR PROJECT]/opencue/rqd-outline
+        name: rqd
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - SYS_ADMIN
+        ports:
+        - containerPort: 8444
+        resources:
+          limits:
+            cpu: "1"
+#        volumeMounts:
+#        - mountPath: /tmp/rqd/logs
+#          name: rqd-claim0
+      nodeSelector:
+        cloud.google.com/gke-nodepool: rqd-pool
+      restartPolicy: Always
+#      volumes:
+#      - name: rqd-claim0
+#        persistentVolumeClaim:
+#          claimName: rqd-claim0
+status: {}

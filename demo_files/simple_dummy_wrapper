@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+echo Working on job ${CUE_JOB}
+echo Running frame ${CUE_FRAME}
+
+echo Setting shot to ${CUE_SHOW}/${CUE_SHOT}
+
+echo "--- ENVIRONMENT ----"
+env | sort
+
+echo About to run "$@"
+eval $@
+result=$?
+echo "Process completed with exit status: $result"
+
+if [ "$result" -lt 256 ]
+then
+    exit $result
+else
+    exit 1
+fi

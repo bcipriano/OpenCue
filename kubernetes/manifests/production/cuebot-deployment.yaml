@@ -1,0 +1,54 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.18.0 (HEAD)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: cuebot
+  name: cuebot
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.18.0 (HEAD)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: cuebot
+    spec:
+      containers:
+      - args:
+        - --datasource.cueDataSource.url=jdbc:postgresql://db/cuebot
+        - --datasource.cueDataSource.username=cuebot
+        - --datasource.cueDataSource.password=$POSTGRES_PASSWORD
+        env:
+        - name: CUE_FRAME_LOG_DIR
+          value: /shots/logs
+        image: opencue/cuebot
+        name: cuebot
+        ports:
+        - containerPort: 8443
+        - containerPort: 8080
+        resources: {}
+      initContainers:
+        - name: flyway
+          image: gcr.io/[INSERT YOUR PROJECT]/opencue/flyway
+          args:
+            - /opt/scripts/migrate.sh
+          env:
+            - name: PGDATABASE
+              value: cuebot
+            - name: PGHOST
+              value: db
+            - name: PGPASSWORD
+            - name: PGPORT
+              value: "5432"
+            - name: PGUSER
+              value: cuebot
+          resources: {}
+      restartPolicy: Always
+status: {}
