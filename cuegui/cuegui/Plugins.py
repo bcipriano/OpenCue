@@ -98,6 +98,9 @@ class Plugins(object):
 
         self.__menu_separator = " \t-> "
 
+        #QtGui.qApp.settings.setValue("Foo", ["one", "two"])
+        #print(QtGui.qApp.settings.value("Foo", list)[0])
+
         # Load plugin paths from the config file
         __pluginPaths = QtGui.qApp.settings.value("Plugin_Paths", [])
         for path in cuegui.Constants.DEFAULT_PLUGIN_PATHS + __pluginPaths:
@@ -237,6 +240,8 @@ class Plugins(object):
 
         if plugin_dir in self._loadedPaths:
             return
+
+        logger.info('Loading plugins from directory %s', plugin_dir)
         self._loadedPaths.append(plugin_dir)
 
         if os.path.isdir(plugin_dir):
