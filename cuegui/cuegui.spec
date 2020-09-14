@@ -1,6 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
 import glob
+import platform
 
 block_cipher = None
 
@@ -50,16 +51,22 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='cuegui',
+          name='CueGUI',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=False )
+          console=False,
+          icon='../images/OpenCue.ico')
 
-app = BUNDLE(exe,
-             name='CueGUI.app',
-             icon=None,
-             bundle_identifier=None)
+if platform.system() == 'Darwin':
+  app = BUNDLE(exe,
+               name='CueGUI.app',
+               icon='../images/OpenCue.icns',
+               bundle_identifier=None,
+               info_plist={
+                 # This is needed for the application to be rendered properly on retina screens.
+                 'NSPrincipalClass': 'NSApplication',
+               })
