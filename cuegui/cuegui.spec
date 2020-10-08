@@ -17,6 +17,7 @@ a = Analysis(['run.py'],
              pathex=['../pycue', './cuegui', './cuegui/plugins'],
              binaries=[],
              datas=[
+               ('../images/OpenCue.ico', 'images'),
                ('../pycue/opencue/default.yaml', 'opencue'),
                ('cuegui/config/*', 'cuegui/config'),
                ('cuegui/images/*.png', 'cuegui/images'),

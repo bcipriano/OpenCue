@@ -22,9 +22,9 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import division
 
-
 from builtins import str
 from builtins import range
+import os
 import sys
 
 from PySide2 import QtCore
@@ -72,7 +72,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setMinimumSize(600, 400)
         self.setAnimated(False)
         self.setDockNestingEnabled(True)
-        self.setWindowIcon(QtGui.QIcon('C:\\Users\\cipriano\\Documents\\GitHub\\OpenCue\\images\\OpenCue.ico'))
+        self.setWindowIcon(
+            QtGui.QIcon(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'images', 'OpenCue.ico')))
 
         # Register this window
         self.__windowOpened()
