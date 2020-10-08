@@ -72,6 +72,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setMinimumSize(600, 400)
         self.setAnimated(False)
         self.setDockNestingEnabled(True)
+        self.setWindowIcon(QtGui.QIcon('C:\\Users\\cipriano\\Documents\\GitHub\\OpenCue\\images\\OpenCue.ico'))
 
         # Register this window
         self.__windowOpened()
