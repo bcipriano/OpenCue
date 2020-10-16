@@ -249,7 +249,7 @@ class Plugins(object):
                     self.loadPlugin(name)
             sys.path = orig_sys_path
         else:
-            logger.warning("Unable to read the plugin path: %s" % plugin_dir)
+            logger.warning('Unable to read the plugin path: "%s"' % plugin_dir)
 
     def loadPlugin(self, name):
         """Loads a single plugin that must be in the python path

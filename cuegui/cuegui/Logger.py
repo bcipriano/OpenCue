@@ -23,14 +23,10 @@ from __future__ import print_function
 from __future__ import division
 
 import logging
+import os
+import sys
 
 import cuegui.Constants
-
-
-__loggerFormat = logging.Formatter(cuegui.Constants.LOGGER_FORMAT)
-loggerStream = logging.StreamHandler()
-loggerStream.setLevel(getattr(logging, cuegui.Constants.LOGGER_LEVEL))
-loggerStream.setFormatter(__loggerFormat)
 
 
 def getLogger(name):
@@ -39,7 +35,21 @@ def getLogger(name):
     @type  name: string
     @return: The new handler
     @rtype:  Handler"""
+    os.makedirs(os.path.dirname(cuegui.Constants.LOG_FILE_PATH), exist_ok=True)
+
+    logger_format = logging.Formatter(cuegui.Constants.LOGGER_FORMAT)
     logger = logging.getLogger(name)
-    logger.addHandler(loggerStream)
+    # This prevents duplicate logging to stderr.
+    logger.propagate = False
+
+    stderr_handler = logging.StreamHandler(sys.stderr)
+    stderr_handler.setLevel(getattr(logging, cuegui.Constants.LOGGER_LEVEL))
+    stderr_handler.setFormatter(logger_format)
+    logger.addHandler(stderr_handler)
+
+    file_handler = logging.FileHandler(cuegui.Constants.LOG_FILE_PATH)
+    file_handler.setLevel(getattr(logging, cuegui.Constants.LOGGER_LEVEL))
+    file_handler.setFormatter(logger_format)
+    logger.addHandler(file_handler)
 
     return logger

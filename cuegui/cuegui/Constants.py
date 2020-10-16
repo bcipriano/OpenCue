@@ -62,7 +62,8 @@ DEFAULT_INI_PATH = os.getenv('CUEGUI_DEFAULT_INI_PATH', os.path.dirname(__file__
 
 DEFAULT_PLUGIN_PATHS = [os.path.dirname(__file__) + "/plugins"]
 
-LOGGER_FORMAT = "%(levelname)-9s %(module)-10s %(message)s"
+LOG_FILE_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs', 'cuegui.log')
+LOGGER_FORMAT = "%(asctime)s %(levelname)s %(filename)s:%(lineno)d %(message)s"
 LOGGER_LEVEL = "WARNING"
 
 EMAIL_SUBJECT_PREFIX = "cuemail: please check "
