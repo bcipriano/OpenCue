@@ -1,5 +1,17 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+# To build:
+#
+#   - Create a virtualenv with all dependencies in requirements.txt, including pyinstaller.
+#   - Activate that virtualenv.
+#   - Build with pyinstaller:
+#     ```
+#     (venv) $ pyinstaller cuegui.spec
+#     ```
+#
+#     Binary will be contained in the cuegui/dist/ directory.
+#
+
 import glob
 import platform
 
